@@ -195,10 +195,13 @@ export default function App() {
   };
 
   /* ── Render ── */
-  if (!supabaseConfigured) return <ConfigError />
-  if (loading) return <Loader />
+if (!supabaseConfigured) return <ConfigError />
+if (loading) return <Loader />
 
-  return (
+// Still waiting for data after auth is confirmed
+if (authUser && !data) return <Loader />
+
+return (
     <>
       <GlobalStyles />
       {!authUser
