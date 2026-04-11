@@ -141,10 +141,39 @@ export default function App() {
   }, []);
 
   /* ── Load data from Supabase, fall back to local cache ── */
-  const loadData = async (user) => {
-    // Show cached data instantly while fetching
+const loadData = async (user) => {
+    setLoading(true);
+
     const cached = lcLoad(user.id);
-    if (cached) { setData(cached); setLoading(false); }
+    if (cached) {
+      setData(cached);
+      setLoading(false);
+    }
+
+    const { data: row, error } = await supabase
+      .from("user_data")
+      .select("payload")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    if (error) {
+      console.error("Load error:", error);
+      if (!cached) setLoading(false);
+      return;
+    }
+
+    if (row?.payload) {
+      const merged = { ...freshData(), ...row.payload };
+      setData(merged);
+      lcSave(user.id, merged);
+    } else {
+      const fresh = freshData();
+      await supabase.from("user_data").insert({ user_id: user.id, payload: fresh });
+      setData(fresh);
+      lcSave(user.id, fresh);
+    }
+    setLoading(false);
+  };
 
     const { data: row, error } = await supabase
       .from("user_data")
