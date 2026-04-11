@@ -325,7 +325,9 @@ function AuthPage() {
           {mode==="signin" && (
             <button onClick={async()=>{
               if(!email.includes("@"))return setErr("Enter your email first.");
-              const {error}=await supabase.auth.resetPasswordForEmail(email,{redirectTo:window.location.origin});
+          const {error} = await supabase.auth.resetPasswordForEmail(email, {
+  redirectTo: window.location.origin
+});
               if(error)setErr(error.message); else setMsg("Password reset email sent. Check your inbox.");
             }} style={{width:"100%",marginTop:10,background:"transparent",border:"none",fontSize:12,
               color:T.textLight,cursor:"pointer",fontFamily:T.mono,textDecoration:"underline"}}>
