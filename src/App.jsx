@@ -142,6 +142,7 @@ export default function App() {
 
   /* ── Load data from Supabase, fall back to local cache ── */
   const loadData = async (user) => {
+     setLoading(true);
     // Show cached data instantly while fetching
     const cached = lcLoad(user.id);
     if (cached) { setData(cached); setLoading(false); }
@@ -197,7 +198,7 @@ export default function App() {
   /* ── Render ── */
   if (!supabaseConfigured) return <ConfigError />
   if (loading) return <Loader />
-
+if (authUser && !data) return <Loader />
   return (
     <>
       <GlobalStyles />
